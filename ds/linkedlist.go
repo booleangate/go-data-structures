@@ -1,5 +1,7 @@
 package ds
 
+import "fmt"
+
 // LinkedList implements a singly-linked list
 type LinkedList[T any] struct {
 	head *llNode[T]
@@ -37,13 +39,42 @@ func (l *LinkedList[T]) Append(vals ...T) {
 	l.len += valLen
 }
 
+func (l *LinkedList[T]) At(idx int) (T, error) {
+	if idx < 0 || idx >= l.len {
+		return zeroValue[T](), fmt.Errorf("index %d is out of bounds [0, %d)", idx, l.len)
+	}
+
+	var v T
+	l.RangeUntil(func(i int, val T) (cont bool) {
+		if i == idx {
+			v = val
+			return false
+		}
+		return true
+	})
+
+	return v, nil
+}
+
 func (l *LinkedList[T]) Len() int {
 	return l.len
 }
 
-func (l *LinkedList[T]) Range(cb func(v T)) {
+func (l *LinkedList[T]) Range(cb func(idx int, val T)) {
+	i := 0
 	for n := l.head; n != nil; n = n.next {
-		cb(n.val)
+		cb(i, n.val)
+		i++
+	}
+}
+
+func (l *LinkedList[T]) RangeUntil(cb func(idx int, val T) (cont bool)) {
+	i := 0
+	for n := l.head; n != nil; n = n.next {
+		if cont := cb(i, n.val); !cont {
+			break
+		}
+		i++
 	}
 }
 
@@ -53,7 +84,7 @@ func (l *LinkedList[T]) ToArray() []T {
 	}
 
 	a := make([]T, 0, l.len)
-	l.Range(func(v T) {
+	l.Range(func(i int, v T) {
 		a = append(a, v)
 	})
 
