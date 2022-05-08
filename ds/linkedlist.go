@@ -59,16 +59,3 @@ func (l *LinkedList[T]) ToArray() []T {
 
 	return a
 }
-
-func (l *LinkedList[T]) Iterator() Iterator[T] {
-	curr := l.head
-	return func() (value T, hasNext bool) {
-		v := curr.val
-		if curr.next != nil {
-			curr = curr.next
-			return v, true
-		}
-
-		return v, false
-	}
-}
