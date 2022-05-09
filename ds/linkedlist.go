@@ -84,9 +84,55 @@ func (l *LinkedList[T]) ToArray() []T {
 	}
 
 	a := make([]T, 0, l.len)
-	l.Range(func(i int, v T) {
-		a = append(a, v)
+	l.Range(func(_ int, val T) {
+		a = append(a, val)
 	})
 
 	return a
+}
+
+func (l *LinkedList[T]) Iterator() Iterator[T] {
+	return newLLIterator(l.head)
+}
+
+type llIterator[T any] struct {
+	curr *llNode[T]
+}
+
+func newLLIterator[T any](head *llNode[T]) *llIterator[T] {
+	// Insert a dummy node at start to allow the first call to Next to move to head.
+	return &llIterator[T]{
+		curr: &llNode[T]{next: head},
+	}
+}
+
+func (it *llIterator[T]) Next() bool {
+	if it.curr == nil {
+		return false
+	}
+
+	it.curr = it.curr.next
+	return it.curr != nil
+}
+
+func (it *llIterator[T]) Value() (val T, ok bool) {
+	if it.curr == nil {
+		return zeroValue[T](), false
+	}
+	return it.curr.val, true
+}
+
+func (l *LinkedList[T]) IteratorF() IteratorF[T] {
+	curr := l.head
+
+	return func() (val T, ok bool) {
+		if curr == nil {
+			return zeroValue[T](), false
+		}
+
+		val = curr.val
+		curr = curr.next
+
+		return val, true
+	}
 }

@@ -61,3 +61,58 @@ func TestLinkedListAt(t *testing.T) {
 		})
 	})
 }
+
+func TestLinkedListIterator(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		var ll ds.LinkedList[int]
+
+		assert.False(t, ll.Iterator().Next(), "shouldn't iterator on an empty list")
+	})
+
+	t.Run("not_empty", func(t *testing.T) {
+		var ll ds.LinkedList[int]
+		vals := []int{1, 2, 3}
+		ll.Append(vals...)
+
+		i := 0
+		it := ll.Iterator()
+		for it.Next() {
+			val, ok := it.Value()
+			assert.True(t, ok, "iterator value should be okay when not yet at the end")
+			assert.Equal(t, vals[i], val)
+			i++
+		}
+
+		_, ok := it.Value()
+		assert.False(t, ok, "iterator value should not be okay after reaching the end")
+		assert.False(t, it.Next(), "iterator should have no next")
+		assert.Equal(t, i, 3, "iterator should have covered all elements in list")
+	})
+}
+
+func TestLinkedListIteratorF(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		var ll ds.LinkedList[int]
+
+		next := ll.IteratorF()
+		_, ok := next()
+		assert.False(t, ok, "Shouldn't iterator on an empty list")
+	})
+
+	t.Run("not_empty", func(t *testing.T) {
+		var ll ds.LinkedList[int]
+		vals := []int{1, 2, 3}
+		ll.Append(vals...)
+
+		i := 0
+		next := ll.IteratorF()
+		for v, ok := next(); ok; v, ok = next() {
+			assert.Equal(t, vals[i], v)
+			i++
+		}
+
+		_, ok := next()
+		assert.False(t, ok, "iterator should have no next")
+		assert.Equal(t, i, 3, "iterator should have covered all elements in list")
+	})
+}
