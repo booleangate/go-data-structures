@@ -1,4 +1,4 @@
-module booleangate.org/ds
+module booleangate.org/gods
 
 go 1.18
 

@@ -1,4 +1,5 @@
-package ds
+// gods provides GO Data Structures
+package gods
 
 // IteratorF defines a functional iterator.
 type IteratorF[T any] func() (value T, ok bool)

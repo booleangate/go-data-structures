@@ -1,16 +1,16 @@
-package ds_test
+package gods_test
 
 import (
 	"testing"
 
-	"booleangate.org/ds/ds"
+	. "booleangate.org/gods"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestLinkedListAppend(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
 		t.Run("single", func(t *testing.T) {
-			var ll ds.LinkedList[int]
+			var ll LinkedList[int]
 			ll.Append(1)
 
 			assert.Equal(t, 1, ll.Len())
@@ -18,7 +18,7 @@ func TestLinkedListAppend(t *testing.T) {
 		})
 
 		t.Run("multiple", func(t *testing.T) {
-			var ll ds.LinkedList[int]
+			var ll LinkedList[int]
 			vals := []int{1, 2, 3}
 			ll.Append(vals...)
 
@@ -31,7 +31,7 @@ func TestLinkedListAppend(t *testing.T) {
 func TestLinkedListAt(t *testing.T) {
 	t.Run("bounds_check", func(t *testing.T) {
 		t.Run("empty", func(t *testing.T) {
-			var ll ds.LinkedList[int]
+			var ll LinkedList[int]
 
 			_, err := ll.At(-1)
 			assert.Error(t, err)
@@ -44,7 +44,7 @@ func TestLinkedListAt(t *testing.T) {
 		})
 
 		t.Run("not_empty", func(t *testing.T) {
-			var ll ds.LinkedList[int]
+			var ll LinkedList[int]
 			ll.Append(1, 2, 3)
 
 			v, err := ll.At(0)
@@ -64,13 +64,13 @@ func TestLinkedListAt(t *testing.T) {
 
 func TestLinkedListIterator(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
-		var ll ds.LinkedList[int]
+		var ll LinkedList[int]
 
 		assert.False(t, ll.Iterator().Next(), "shouldn't iterator on an empty list")
 	})
 
 	t.Run("not_empty", func(t *testing.T) {
-		var ll ds.LinkedList[int]
+		var ll LinkedList[int]
 		vals := []int{1, 2, 3}
 		ll.Append(vals...)
 
@@ -92,7 +92,7 @@ func TestLinkedListIterator(t *testing.T) {
 
 func TestLinkedListIteratorF(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
-		var ll ds.LinkedList[int]
+		var ll LinkedList[int]
 
 		next := ll.IteratorF()
 		_, ok := next()
@@ -100,7 +100,7 @@ func TestLinkedListIteratorF(t *testing.T) {
 	})
 
 	t.Run("not_empty", func(t *testing.T) {
-		var ll ds.LinkedList[int]
+		var ll LinkedList[int]
 		vals := []int{1, 2, 3}
 		ll.Append(vals...)
 
