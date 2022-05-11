@@ -2,7 +2,7 @@ package gods
 
 import "fmt"
 
-// LinkedList implements a singly-linked list
+// LinkedList implements a singly-linked list.
 type LinkedList[T any] struct {
 	head *llNode[T]
 	len  int
@@ -24,6 +24,7 @@ func newNodeChain[T any](vals []T) (head, tail *llNode[T]) {
 	return head, tail
 }
 
+// Append values to end the of the linked list.  If no values are provided, nothing is changed.
 func (l *LinkedList[T]) Append(vals ...T) {
 	if len(vals) == 0 {
 		return
@@ -41,6 +42,8 @@ func (l *LinkedList[T]) Append(vals ...T) {
 	l.len += len(vals)
 }
 
+// Insert inserts the values starting at the index.  An error is returned if the index is out of bounds. Index 0 is
+// always allowed.  If no values are provided, nothing is changed.
 func (l *LinkedList[T]) Insert(idx int, vals ...T) error {
 	if len(vals) == 0 {
 		return nil
@@ -60,8 +63,8 @@ func (l *LinkedList[T]) Insert(idx int, vals ...T) error {
 		head, tail := newNodeChain(vals)
 		prev.next = head
 		tail.next = node
-
 	}
+
 	l.len += len(vals)
 
 	return nil
@@ -84,6 +87,7 @@ func (l *LinkedList[T]) Delete(idx int) (T, error) {
 	return node.val, nil
 }
 
+// At returns the value at idx.  An error is returned if idx is out of bounds.
 func (l *LinkedList[T]) At(idx int) (T, error) {
 	node, _, err := l.node(idx)
 	if err != nil {
@@ -93,10 +97,12 @@ func (l *LinkedList[T]) At(idx int) (T, error) {
 	return node.val, nil
 }
 
+// Len returns the length of the linked list.
 func (l *LinkedList[T]) Len() int {
 	return l.len
 }
 
+// Range ranges over the linked list and calls the callback, cb with the index and value of each node in the list.
 func (l *LinkedList[T]) Range(cb func(idx int, val T)) {
 	i := 0
 	for n := l.head; n != nil; n = n.next {
@@ -105,6 +111,7 @@ func (l *LinkedList[T]) Range(cb func(idx int, val T)) {
 	}
 }
 
+// ToArray converts the linked list into an array.
 func (l *LinkedList[T]) ToArray() []T {
 	if l.head == nil {
 		return nil
@@ -118,10 +125,12 @@ func (l *LinkedList[T]) ToArray() []T {
 	return a
 }
 
+// Iterator returns a new iterator interface.
 func (l *LinkedList[T]) Iterator() Iterator[T] {
 	return newLLIterator(l.head)
 }
 
+// Iterator returns a new iterator function.
 func (l *LinkedList[T]) IteratorF() IteratorF[T] {
 	curr := l.head
 
