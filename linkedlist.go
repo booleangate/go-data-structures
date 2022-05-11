@@ -67,6 +67,23 @@ func (l *LinkedList[T]) Insert(idx int, vals ...T) error {
 	return nil
 }
 
+// Delete the value at the index and return it.  An error is returned if the index is out of bounds.
+func (l *LinkedList[T]) Delete(idx int) (T, error) {
+	node, prev, err := l.node(idx)
+	if err != nil {
+		return zeroValue[T](), err
+	}
+
+	if idx == 0 {
+		l.head = node.next
+	} else {
+		prev.next = node.next
+	}
+	l.len--
+
+	return node.val, nil
+}
+
 func (l *LinkedList[T]) At(idx int) (T, error) {
 	node, _, err := l.node(idx)
 	if err != nil {

@@ -112,6 +112,55 @@ func TestLinkedListInsert(t *testing.T) {
 	})
 }
 
+func TestLinkedListDelete(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		t.Run("out_of_bounds", func(t *testing.T) {
+			var ll LinkedList[int]
+			_, err := ll.Delete(0)
+			assert.Error(t, err)
+			_, err = ll.Delete(1)
+			assert.Error(t, err)
+			_, err = ll.Delete(-1)
+			assert.Error(t, err)
+		})
+	})
+
+	t.Run("not_empty", func(t *testing.T) {
+		t.Run("head", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			val, err := ll.Delete(0)
+			assert.NoError(t, err)
+
+			assert.Equal(t, 2, ll.Len())
+			assert.Equal(t, []int{2, 3}, ll.ToArray())
+			assert.Equal(t, 1, val)
+		})
+
+		t.Run("middle", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			val, err := ll.Delete(1)
+			assert.NoError(t, err)
+
+			assert.Equal(t, 2, ll.Len())
+			assert.Equal(t, []int{1, 3}, ll.ToArray())
+			assert.Equal(t, 2, val)
+		})
+
+		t.Run("tail", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			val, err := ll.Delete(ll.Len() - 1)
+			assert.NoError(t, err)
+
+			assert.Equal(t, 2, ll.Len())
+			assert.Equal(t, []int{1, 2}, ll.ToArray())
+			assert.Equal(t, 3, val)
+		})
+	})
+}
+
 func TestLinkedListAt(t *testing.T) {
 	t.Run("bounds_check", func(t *testing.T) {
 		t.Run("empty", func(t *testing.T) {
