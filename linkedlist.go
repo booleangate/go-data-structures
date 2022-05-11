@@ -40,20 +40,12 @@ func (l *LinkedList[T]) Append(vals ...T) {
 }
 
 func (l *LinkedList[T]) At(idx int) (T, error) {
-	if idx < 0 || idx >= l.len {
-		return zeroValue[T](), fmt.Errorf("index %d is out of bounds [0, %d)", idx, l.len)
+	node, err := l.node(idx)
+	if err != nil {
+		return zeroValue[T](), err
 	}
 
-	var v T
-	l.RangeUntil(func(i int, val T) (cont bool) {
-		if i == idx {
-			v = val
-			return false
-		}
-		return true
-	})
-
-	return v, nil
+	return node.val, nil
 }
 
 func (l *LinkedList[T]) Len() int {
@@ -95,6 +87,41 @@ func (l *LinkedList[T]) Iterator() Iterator[T] {
 	return newLLIterator(l.head)
 }
 
+func (l *LinkedList[T]) IteratorF() IteratorF[T] {
+	curr := l.head
+
+	return func() (val T, ok bool) {
+		if curr == nil {
+			return zeroValue[T](), false
+		}
+
+		val = curr.val
+		curr = curr.next
+
+		return val, true
+	}
+}
+
+func (l *LinkedList[T]) node(idx int) (*llNode[T], error) {
+	if l.len == 0 {
+		return nil, fmt.Errorf("index %d is out of bounds, list is empty", idx)
+	}
+	if idx < 0 || idx >= l.len {
+		return nil, fmt.Errorf("index %d is out of bounds [0, %d)", idx, l.len)
+	}
+
+	i := 0
+	n := l.head
+	for ; n != nil; n = n.next {
+		if i == idx {
+			break
+		}
+		i++
+	}
+
+	return n, nil
+}
+
 type llIterator[T any] struct {
 	curr *llNode[T]
 }
@@ -120,19 +147,4 @@ func (it *llIterator[T]) Value() (val T, ok bool) {
 		return zeroValue[T](), false
 	}
 	return it.curr.val, true
-}
-
-func (l *LinkedList[T]) IteratorF() IteratorF[T] {
-	curr := l.head
-
-	return func() (val T, ok bool) {
-		if curr == nil {
-			return zeroValue[T](), false
-		}
-
-		val = curr.val
-		curr = curr.next
-
-		return val, true
-	}
 }
