@@ -88,16 +88,6 @@ func (l *LinkedList[T]) Range(cb func(idx int, val T)) {
 	}
 }
 
-func (l *LinkedList[T]) RangeUntil(cb func(idx int, val T) (cont bool)) {
-	i := 0
-	for n := l.head; n != nil; n = n.next {
-		if cont := cb(i, n.val); !cont {
-			break
-		}
-		i++
-	}
-}
-
 func (l *LinkedList[T]) ToArray() []T {
 	if l.head == nil {
 		return nil

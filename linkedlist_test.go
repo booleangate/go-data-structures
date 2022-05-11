@@ -26,6 +26,90 @@ func TestLinkedListAppend(t *testing.T) {
 			assert.Equal(t, vals, ll.ToArray())
 		})
 	})
+
+	t.Run("non_empty", func(t *testing.T) {
+		t.Run("single", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1)
+			ll.Append(2)
+
+			assert.Equal(t, 2, ll.Len())
+			assert.Equal(t, []int{1, 2}, ll.ToArray())
+		})
+
+		t.Run("multiple", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1)
+			ll.Append(2, 3)
+
+			assert.Equal(t, 3, ll.Len())
+			assert.Equal(t, []int{1, 2, 3}, ll.ToArray())
+		})
+	})
+}
+
+func TestLinkedListInsert(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		t.Run("single", func(t *testing.T) {
+			var ll LinkedList[int]
+			assert.NoError(t, ll.Insert(0, 1))
+
+			assert.Equal(t, 1, ll.Len())
+			assert.Equal(t, []int{1}, ll.ToArray())
+		})
+
+		t.Run("multiple", func(t *testing.T) {
+			var ll LinkedList[int]
+			vals := []int{1, 2, 3}
+			assert.NoError(t, ll.Insert(0, vals...))
+
+			assert.Equal(t, len(vals), ll.Len())
+			assert.Equal(t, vals, ll.ToArray())
+		})
+
+		t.Run("out_of_bounds", func(t *testing.T) {
+			var ll LinkedList[int]
+			assert.Error(t, ll.Insert(1, 1))
+			assert.Error(t, ll.Insert(-1, 1))
+		})
+	})
+
+	t.Run("not_empty", func(t *testing.T) {
+		t.Run("single_middle", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			assert.NoError(t, ll.Insert(1, 4))
+
+			assert.Equal(t, 4, ll.Len())
+			assert.Equal(t, []int{1, 4, 2, 3}, ll.ToArray())
+		})
+
+		t.Run("multiple_middle", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			assert.NoError(t, ll.Insert(1, 4, 5, 6))
+
+			assert.Equal(t, 6, ll.Len())
+			assert.Equal(t, []int{1, 4, 5, 6, 2, 3}, ll.ToArray())
+		})
+		t.Run("single_end", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			assert.NoError(t, ll.Insert(ll.Len()-1, 4))
+
+			assert.Equal(t, 4, ll.Len())
+			assert.Equal(t, []int{1, 2, 4, 3}, ll.ToArray())
+		})
+
+		t.Run("multiple_end", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			assert.NoError(t, ll.Insert(ll.Len()-1, 4, 5, 6))
+
+			assert.Equal(t, 6, ll.Len())
+			assert.Equal(t, []int{1, 2, 4, 5, 6, 3}, ll.ToArray())
+		})
+	})
 }
 
 func TestLinkedListAt(t *testing.T) {
