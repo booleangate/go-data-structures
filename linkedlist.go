@@ -42,8 +42,8 @@ func (l *LinkedList[T]) Append(vals ...T) {
 	l.len += len(vals)
 }
 
-// Insert inserts the values starting at the index.  An error is returned if the index is out of bounds. Index 0 is
-// always allowed.  If no values are provided, nothing is changed.
+// Insert inserts the values starting at the index.  An error is returned if the index is out of bounds.  Index 0 is
+// always allowed (because its the same as appending).  If no values are provided, nothing is changed.
 func (l *LinkedList[T]) Insert(idx int, vals ...T) error {
 	if len(vals) == 0 {
 		return nil
@@ -85,6 +85,52 @@ func (l *LinkedList[T]) Delete(idx int) (T, error) {
 	l.len--
 
 	return node.val, nil
+}
+
+// DeleteN deletes the values from index to index+n, and returns a sub linked list of the deleted values.  If index+n
+// extends past the end of the list, as many nodes as possible will be deleted.  An error is returned if the index is
+// out of bounds.
+func (l *LinkedList[T]) DeleteN(idx, n int) (LinkedList[T], error) {
+	node, prev, err := l.node(idx)
+	if err != nil {
+		return LinkedList[T]{}, err
+	}
+
+	if n == 0 {
+		return LinkedList[T]{}, nil
+	}
+
+	deleted := LinkedList[T]{
+		head: node,
+		len:  l.len - idx,
+	}
+
+	if idx+n >= l.len {
+		if prev == nil { // e.g. idx=0
+			l.head = nil
+			l.len = 0
+		} else {
+			// Delete from node to the end of the list
+			prev.next = nil
+			l.len -= deleted.len
+		}
+	} else {
+		// Recursive delete will only happen once since we will delete all the way to the end.  This will hit the simple
+		// case above.
+		tail, err := deleted.DeleteN(n, deleted.len)
+		if err != nil { // this should never happen, n should always be inbounds
+			return LinkedList[T]{}, fmt.Errorf("failed to rejoin tail: %w", err)
+		}
+		if prev == nil { // e.g. idx=0
+			l.head = tail.head
+			l.len = tail.len
+		} else {
+			prev.next = tail.head
+			l.len -= deleted.len
+		}
+	}
+
+	return deleted, nil
 }
 
 // At returns the value at idx.  An error is returned if idx is out of bounds.

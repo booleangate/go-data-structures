@@ -161,6 +161,135 @@ func TestLinkedListDelete(t *testing.T) {
 	})
 }
 
+func TestLinkedListDeleteN(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		t.Run("out_of_bounds", func(t *testing.T) {
+			var ll LinkedList[int]
+			_, err := ll.DeleteN(0, 1)
+			assert.Error(t, err)
+			_, err = ll.DeleteN(1, 1)
+			assert.Error(t, err)
+			_, err = ll.DeleteN(-1, 1)
+			assert.Error(t, err)
+		})
+	})
+
+	t.Run("not_empty_one", func(t *testing.T) {
+		t.Run("head", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			deletedLL, err := ll.DeleteN(0, 1)
+			assert.NoError(t, err)
+
+			assert.Equal(t, 2, ll.Len())
+			assert.Equal(t, []int{2, 3}, ll.ToArray())
+			assert.Equal(t, 1, deletedLL.Len())
+			assert.Equal(t, []int{1}, deletedLL.ToArray())
+		})
+
+		t.Run("middle", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			deletedLL, err := ll.DeleteN(1, 1)
+			assert.NoError(t, err)
+
+			assert.Equal(t, 2, ll.Len())
+			assert.Equal(t, []int{1, 3}, ll.ToArray())
+			assert.Equal(t, 1, deletedLL.Len())
+			assert.Equal(t, []int{2}, deletedLL.ToArray())
+		})
+
+		t.Run("tail", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			deletedLL, err := ll.DeleteN(ll.Len()-1, 1)
+			assert.NoError(t, err)
+
+			assert.Equal(t, 2, ll.Len())
+			assert.Equal(t, []int{1, 2}, ll.ToArray())
+			assert.Equal(t, 1, deletedLL.Len())
+			assert.Equal(t, []int{3}, deletedLL.ToArray())
+		})
+	})
+
+	t.Run("not_empty_many", func(t *testing.T) {
+		t.Run("head", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			deletedLL, err := ll.DeleteN(0, 2)
+			assert.NoError(t, err)
+
+			assert.Equal(t, 1, ll.Len())
+			assert.Equal(t, []int{3}, ll.ToArray())
+			assert.Equal(t, 2, deletedLL.Len())
+			assert.Equal(t, []int{1, 2}, deletedLL.ToArray())
+		})
+
+		t.Run("middle", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3, 4)
+			deletedLL, err := ll.DeleteN(1, 2)
+			assert.NoError(t, err)
+
+			assert.Equal(t, 2, ll.Len())
+			assert.Equal(t, []int{1, 4}, ll.ToArray())
+			assert.Equal(t, 2, deletedLL.Len())
+			assert.Equal(t, []int{2, 3}, deletedLL.ToArray())
+		})
+
+		t.Run("tail", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			deletedLL, err := ll.DeleteN(ll.Len()-1, 2)
+			assert.NoError(t, err)
+
+			assert.Equal(t, 2, ll.Len())
+			assert.Equal(t, []int{1, 2}, ll.ToArray())
+			assert.Equal(t, 1, deletedLL.Len())
+			assert.Equal(t, []int{3}, deletedLL.ToArray())
+		})
+	})
+
+	t.Run("not_empty_all", func(t *testing.T) {
+		t.Run("head", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			deletedLL, err := ll.DeleteN(0, ll.Len())
+			assert.NoError(t, err)
+
+			assert.Equal(t, 0, ll.Len())
+			var nilArray []int
+			assert.Equal(t, nilArray, ll.ToArray())
+			assert.Equal(t, 3, deletedLL.Len())
+			assert.Equal(t, []int{1, 2, 3}, deletedLL.ToArray())
+		})
+
+		t.Run("middle", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			deletedLL, err := ll.DeleteN(1, ll.Len())
+			assert.NoError(t, err)
+
+			assert.Equal(t, 1, ll.Len())
+			assert.Equal(t, []int{1}, ll.ToArray())
+			assert.Equal(t, 2, deletedLL.Len())
+			assert.Equal(t, []int{2, 3}, deletedLL.ToArray())
+		})
+
+		t.Run("tail", func(t *testing.T) {
+			var ll LinkedList[int]
+			ll.Append(1, 2, 3)
+			deletedLL, err := ll.DeleteN(ll.Len()-1, ll.Len())
+			assert.NoError(t, err)
+
+			assert.Equal(t, 2, ll.Len())
+			assert.Equal(t, []int{1, 2}, ll.ToArray())
+			assert.Equal(t, 1, deletedLL.Len())
+			assert.Equal(t, []int{3}, deletedLL.ToArray())
+		})
+	})
+}
+
 func TestLinkedListAt(t *testing.T) {
 	t.Run("bounds_check", func(t *testing.T) {
 		t.Run("empty", func(t *testing.T) {
