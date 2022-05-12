@@ -143,7 +143,7 @@ func (l *LinkedList[T]) At(idx int) (T, error) {
 	return node.val, nil
 }
 
-func (l *LinkedList[T]) Empty() bool {
+func (l *LinkedList[T]) IsEmpty() bool {
 	return l.len == 0
 }
 
@@ -222,7 +222,7 @@ type llIterator[T any] struct {
 }
 
 func newLLIterator[T any](head *llNode[T]) *llIterator[T] {
-	// Insert a dummy node at start to allow the first call to Next to move to head.
+	// Insert a sentinel at start to allow the first call to Next to move to head.
 	return &llIterator[T]{
 		curr: &llNode[T]{next: head},
 	}

@@ -66,7 +66,7 @@ func TestSetDelete(t *testing.T) {
 
 		assert.Equal(t, 5, s.Delete(1, 2, 3, 4, 5))
 		assert.Equal(t, 0, s.Len())
-		assert.True(t, s.Empty())
+		assert.True(t, s.IsEmpty())
 		var nilSlice []int
 		assert.ElementsMatch(t, nilSlice, s.ToArray())
 	})
@@ -78,18 +78,18 @@ func TestSetClear(t *testing.T) {
 	t.Run("when_empty", func(t *testing.T) {
 		s := NewSet[int]()
 
-		assert.True(t, s.Empty())
+		assert.True(t, s.IsEmpty())
 		assert.Equal(t, 0, s.Clear())
-		assert.True(t, s.Empty())
+		assert.True(t, s.IsEmpty())
 		assert.ElementsMatch(t, nilSlice, s.ToArray())
 	})
 	t.Run("when_not_empty", func(t *testing.T) {
 		s := NewSet[int]()
 		s.Add(1, 2, 3, 4, 5)
 
-		assert.False(t, s.Empty())
+		assert.False(t, s.IsEmpty())
 		assert.Equal(t, 5, s.Clear())
-		assert.True(t, s.Empty())
+		assert.True(t, s.IsEmpty())
 		assert.ElementsMatch(t, nilSlice, s.ToArray())
 	})
 }
