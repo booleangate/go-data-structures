@@ -143,18 +143,13 @@ func (l *LinkedList[T]) At(idx int) (T, error) {
 	return node.val, nil
 }
 
+func (l *LinkedList[T]) Empty() bool {
+	return l.len == 0
+}
+
 // Len returns the length of the linked list.
 func (l *LinkedList[T]) Len() int {
 	return l.len
-}
-
-// Range ranges over the linked list and calls the callback, cb with the index and value of each node in the list.
-func (l *LinkedList[T]) Range(cb func(idx int, val T)) {
-	i := 0
-	for n := l.head; n != nil; n = n.next {
-		cb(i, n.val)
-		i++
-	}
 }
 
 // ToArray converts the linked list into an array.
@@ -169,6 +164,15 @@ func (l *LinkedList[T]) ToArray() []T {
 	})
 
 	return a
+}
+
+// Range ranges over the linked list and calls the callback, cb with the index and value of each node in the list.
+func (l *LinkedList[T]) Range(cb func(idx int, val T)) {
+	i := 0
+	for n := l.head; n != nil; n = n.next {
+		cb(i, n.val)
+		i++
+	}
 }
 
 // Iterator returns a new iterator interface.
