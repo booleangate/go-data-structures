@@ -7,28 +7,34 @@ type Set[K comparable, V any] struct {
 	hasher Hasher[K, V]
 }
 
-func NewSetComparable[T comparable]() Set[T, T] {
-	return Set[T, T]{
-		vals:   map[T]T{},
-		hasher: func(v T) T { return v },
-	}
+func NewSet[T comparable]() Set[T, T] {
+	// For a comparable, the hasher just returns the value
+	//
+	return NewSetWithHasher(func(v T) T { return v })
 }
 
-func NewSet[K comparable, V any](hasher Hasher[K, V]) Set[K, V] {
+func NewSetWithHasher[K comparable, V any](hasher Hasher[K, V]) Set[K, V] {
 	return Set[K, V]{
 		vals:   map[K]V{},
 		hasher: hasher,
 	}
 }
 
-func (s *Set[K, V]) Add(vals ...V) bool {
-	panic("not implemented")
-	return false
+func (s *Set[K, V]) Add(vals ...V) int {
+	var added int
+	for _, v := range vals {
+		k := s.hasher(v)
+		if _, ok := s.vals[k]; !ok {
+			s.vals[k] = v
+			added++
+		}
+	}
+	return added
 }
 
-func (s *Set[K, V]) Delete(val ...V) bool {
+func (s *Set[K, V]) Delete(val ...V) int {
 	panic("not implemented")
-	return false
+	return 0
 }
 
 func (s *Set[K, V]) Has(val V) bool {
@@ -45,8 +51,16 @@ func (s *Set[K, V]) Len() int {
 }
 
 func (s *Set[K, V]) ToArray() []V {
-	panic("not implemented")
-	return nil
+	if s.Empty() {
+		return nil
+	}
+
+	vals := make([]V, 0, len(s.vals))
+	for k := range s.vals {
+		vals = append(vals, s.vals[k])
+	}
+
+	return vals
 }
 
 // Range ranges over the linked list and calls the callback, cb with the index and value of each node in the list.
