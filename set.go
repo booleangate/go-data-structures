@@ -9,7 +9,6 @@ type Set[K comparable, V any] struct {
 
 func NewSet[T comparable]() Set[T, T] {
 	// For a comparable, the hasher just returns the value
-	//
 	return NewSetWithHasher(func(v T) T { return v })
 }
 
@@ -32,14 +31,28 @@ func (s *Set[K, V]) Add(vals ...V) int {
 	return added
 }
 
-func (s *Set[K, V]) Delete(val ...V) int {
-	panic("not implemented")
-	return 0
+func (s *Set[K, V]) Delete(vals ...V) int {
+	var deleted int
+	for _, v := range vals {
+		k := s.hasher(v)
+		if _, ok := s.vals[k]; ok {
+			delete(s.vals, k)
+			deleted++
+		}
+	}
+	return deleted
+}
+
+func (s *Set[K, V]) Clear() int {
+	l := len(s.vals)
+	s.vals = map[K]V{}
+	return l
 }
 
 func (s *Set[K, V]) Has(val V) bool {
-	panic("not implemented")
-	return false
+	k := s.hasher(val)
+	_, ok := s.vals[k]
+	return ok
 }
 
 func (s *Set[K, V]) Empty() bool {
