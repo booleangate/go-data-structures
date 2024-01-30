@@ -34,6 +34,10 @@ Provides a library generic data structures.
 - Graphs
 - [ ] Directed graph
 - [ ] Directed Acyclic graph
+- Sorting
+  - [x] Merge Sort
+  - [ ] Heap Sort
+  - [ ] Quick Sort
 
 Probabilistic
 - [ ] [Skip List](https://en.wikipedia.org/wiki/Skip_list)
